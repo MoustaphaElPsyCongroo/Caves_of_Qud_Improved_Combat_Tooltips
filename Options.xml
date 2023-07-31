@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<options>
+
+	<option ID="OptionIDT_ColorAnyNonPhysical"
+		DisplayText="Always color tooltips on special damage. When disabled, tooltips	will have the color of the strongest damage type of the attack"
+		Category="Improved Damage Tooltips" Type="Checkbox"
+		Default="Yes"></option>
+	<option ID="OptionIDT_ShowZeroBleeding"
+		DisplayText="Show -0 when target took 0 damage (examples: elemental immunity or	bleeding without damage this turn)"
+		Category="Improved Damage Tooltips" Type="Checkbox" Default="No"></option>
+</options>
