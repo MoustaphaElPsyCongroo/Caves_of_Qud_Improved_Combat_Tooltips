@@ -13,11 +13,11 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
     [HarmonyPatch]
     class ShowDamage
     {
-        private static int highestPenetrations = 0;
         private static List<DamageInstance> damageInstances = new List<DamageInstance>();
         private static GameObject Defender;
         private static Cell floatingTextLastCell = null;
         private static Statistic lastStat;
+        private static int highestPenetrations = 0;
 
         // private static GameObject Attacker;
         // private static bool shouldDisplayFloatingText = false;
@@ -83,14 +83,6 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
             // continued for any reason
             if (!__result || !__state.isValidCombat)
             {
-                // /* Can happen if a special weapon kills with its extra damage
-                //  before even touching with its regular damage (like can
-                //  happen a lot with weapons that have elemental mods) */
-                // if (!__state.isValidCombat && damageInstances.Any())
-                // {
-                //     // HandleInvalidExistingCombat(damageType);
-                //     DisplayFloatingDamage();
-                // }
                 // if (!__result)
                 // {
                 // XRL.Messages.MessageQueue.AddPlayerMessage("__result is false");
@@ -266,57 +258,6 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
                     cellDefender
                 );
             }
-
-            //     float scale = GetScale();
-            //     Cell cell = floatingTextLastCell;
-
-            //     // Get the color of the tooltip
-            //     foreach (
-            //         DamageInstance damageInstance in damageInstances.OrderByDescending(
-            //             dmg => dmg.Amount
-            //         )
-            //     )
-            //     {
-            //         XRL.Messages.MessageQueue.AddPlayerMessage(
-            //             "highlighted damage type = "
-            //                 + damageInstance.Type
-            //                 + ", value = "
-            //                 + damageInstance.Amount.ToString()
-            //         );
-            //         if (
-            //             Options.GetOption("OptionIDT_ColorAnyNonPhysical") == "Yes"
-            //             && damageInstance.Type == "Physical"
-            //         )
-            //         {
-            //             continue;
-            //         }
-            //         else
-            //         {
-            //             damageColor = damageInstance.Color;
-            //             cell = damageInstance.Cell;
-            //             break;
-            //         }
-            //     }
-            //     XRL.Messages.MessageQueue.AddPlayerMessage("display floating");
-            //     XRL.Messages.MessageQueue.AddPlayerMessage(
-            //         "total damage = " + totalDamage.ToString()
-            //     );
-            //     if (Options.GetOption("OptionIDT_ShowZeroBleeding") == "No" && totalDamage == 0)
-            //     {
-            //         Cleanup();
-            //         return;
-            //     }
-            //     CombatJuice.floatingText(
-            //         cell,
-            //         "-" + totalDamage,
-            //         damageColor,
-            //         1.5f,
-            //         24f,
-            //         scale,
-            //         true,
-            //         Defender
-            //     );
-            // }
             Cleanup();
         }
 
@@ -440,34 +381,5 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
             }
             return scale;
         }
-
-        // static void HandleInvalidExistingCombat(string damageType)
-        // {
-        // damageInstances.RemoveAll(instance => instance.Type == damageType && (instance.Cell != floatingTextLastCell || (instance.Cell == floatingTextLastCell && instance.Defender != Defender)));
-        // foreach (DamageInstance instance in damageInstances)
-        // {
-        // 	/* Detect multicell damage (explosions/gases etc)
-        // 		Multicell damage has a single damagetype (there is no "multitype"
-        // 		gases etc), so if damage of a given type is being applied to a
-        // 		different cell or different Defender than already targeted this turn,
-        // 		it is multicell damage (damage that is part of a larger explosion/gas).
-        // 	*/
-        // 	if (instance.Type == damageType && (instance.Cell != floatingTextLastCell || (instance.Cell == floatingTextLastCell && instance.Defender != Defender)))
-        // 	{
-        // 		isMultiCellDamage = true;
-        // 		break;
-        // 	}
-        // }
-        // if (damageInstances.Any())
-        // {
-        // 	XRL.Messages.MessageQueue.AddPlayerMessage("Removed invalid multicell instances, displaying remaining");
-        // 	DisplayFloatingDamage();
-        // }
-        // else
-        // {
-        // 	XRL.Messages.MessageQueue.AddPlayerMessage("Invalid damage is MultiCellDamage, removed");
-        // 	// Cleanup();
-        // }
-        // }
     }
 }
