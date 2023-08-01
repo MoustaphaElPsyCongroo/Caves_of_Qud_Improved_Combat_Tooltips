@@ -19,7 +19,7 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
         {
             GameObject Actor = ParentEvent.Actor;
 
-            if (Actor.IsPlayer() && Options.GetOption("OptionICTooltips_ShowXP") == "Yes")
+            if (Actor.IsPlayer())
             {
                 totalXP += Amount;
                 Player = Actor;
@@ -28,7 +28,7 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
         }
 
         [HarmonyPatch(typeof(EndActionEvent), nameof(EndActionEvent.Send))]
-        static void Postfix()
+        static void Prefix(GameObject __state)
         {
             if (totalXP > 0 && Options.GetOption("OptionICTooltips_ShowXP") == "Yes")
             {

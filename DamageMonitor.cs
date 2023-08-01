@@ -311,7 +311,11 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
         {
             string damageType;
 
-            if (damage.IsHeatDamage())
+            if (damage.HasAttribute("Vaporized"))
+            {
+                damageType = "Vaporized";
+            }
+            else if (damage.IsHeatDamage())
             {
                 if (damage.HasAttribute("NoBurn"))
                 {
@@ -321,10 +325,6 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                 {
                     damageType = "Fire";
                 }
-            }
-            else if (damage.HasAttribute("Vaporized"))
-            {
-                damageType = "Vaporized";
             }
             else if (damage.IsColdDamage())
             {
@@ -381,6 +381,14 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
             else if (damage.HasAttribute("Mental"))
             {
                 damageType = "Mental";
+            }
+            else if (damage.HasAttribute("Explosion"))
+            {
+                damageType = "Explosion";
+            }
+            else if (damage.HasAttribute("Gas"))
+            {
+                damageType = "Gas";
             }
             else
             {
