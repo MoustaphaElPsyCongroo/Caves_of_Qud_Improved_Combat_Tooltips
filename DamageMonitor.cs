@@ -14,10 +14,6 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
     class ShowDamage
     {
         private static List<DamageInstance> damageInstances = new List<DamageInstance>();
-        private static GameObject Defender;
-        private static Cell floatingTextLastCell = null;
-        private static Statistic lastStat;
-        private static int highestPenetrations = 0;
 
         // private static GameObject Attacker;
         // private static bool shouldDisplayFloatingText = false;
@@ -36,7 +32,7 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
         {
             // shouldDisplayFloatingText = false;
             __state = new CombatState();
-            Defender = __instance.ParentObject;
+            GameObject Defender = __instance.ParentObject;
             GameObject gameObject =
                 E.GetGameObjectParameter("Source")
                 ?? E.GetGameObjectParameter("Attacker")
@@ -45,8 +41,8 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
                 E.GetGameObjectParameter("Owner")
                 ?? E.GetGameObjectParameter("Attacker")
                 ?? ((gameObject != null && gameObject.IsCreature) ? gameObject : null);
-            floatingTextLastCell = Defender.CurrentCell;
-            lastStat = Defender.GetStat("Hitpoints");
+            __state.defenderCell = Defender.CurrentCell;
+            Statistic defenderStat = Defender.GetStat("Hitpoints");
 
             if (
                 Defender.IsValid()
@@ -62,7 +58,16 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
             )
             {
                 __state.isValidCombat = true;
-                // XRL.Messages.MessageQueue.AddPlayerMessage("combat is valid");
+                __state.Defender = Defender;
+                __state.defenderStat = defenderStat;
+                __state.Attacker = gameObject2;
+                __state.attackerCell = gameObject2?.CurrentCell;
+                if (gameObject2 != null)
+                {
+                    __state.isAttackerThePlayer = gameObject2.IsPlayer();
+                }
+                // XRL.Messages.MessageQueue.AddPlayerMessage("combat is
+                // valid");
             }
             else
             {
@@ -78,6 +83,7 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
             Damage damage = E.GetParameter("Damage") as Damage;
             string damageType = GetDamageType(damage);
             int damageAmount = damage.Amount;
+            int penetrations = E.GetIntParameter("Penetrations");
 
             // ProcessTakeDamage returns false if damage processing shouldn't be
             // continued for any reason
@@ -106,38 +112,18 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
             DamageInstance damageInstance = null;
             foreach (DamageInstance instance in damageInstances)
             {
-                /* Detect multicell damage (explosions/gases etc)
-                Multicell damage has a single damagetype (there is no "multitype"
-                gases etc), so if damage of a given type is being applied to a
-                different cell or different Defender than already targeted this turn,
-                it is multicell damage (damage that is part of a larger explosion/gas).
-                */
                 if (
-                    instance.Type == damageType
-                    && (
-                        instance.Cell != floatingTextLastCell
-                        || (instance.Cell == floatingTextLastCell && instance.Defender != Defender)
-                    )
-                )
-                {
-                    // __state.isMultiCellDamage = true;
-                    // Never display invalid multicell damage instances
-                    if (!__state.isValidCombat)
-                    {
-                        // XRL.Messages.MessageQueue.AddPlayerMessage(
-                        //     "combat instance is invalid, not added"
-                        // );
-                        return;
-                    }
-                }
-                if (
-                    instance.Cell == floatingTextLastCell
+                    instance.DefenderCell == __state.defenderCell
                     && instance.Type == damageType
-                    && instance.Defender == Defender
+                    && instance.Defender == __state.Defender
                 )
                 {
                     damageInstance = instance;
                     damageInstance.Amount += damageAmount;
+                    if (penetrations > damageInstance.Penetrations)
+                    {
+                        damageInstance.Penetrations = penetrations;
+                    }
                     break;
                 }
             }
@@ -145,10 +131,14 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
             {
                 damageInstance = new DamageInstance(
                     damageAmount,
-                    Defender,
+                    penetrations,
                     damageType,
-                    lastStat,
-                    floatingTextLastCell
+                    __state.Defender,
+                    __state.Attacker,
+                    __state.isAttackerThePlayer,
+                    __state.defenderStat,
+                    __state.defenderCell,
+                    __state.attackerCell
                 );
                 damageInstances.Add(damageInstance);
             }
@@ -174,7 +164,6 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
 
         static void Cleanup()
         {
-            floatingTextLastCell = null;
             damageInstances.Clear();
         }
 
@@ -184,34 +173,50 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
 
             bool ShowZeroBleeding = Options.GetOption("OptionIDT_ShowZeroBleeding") == "Yes";
             bool ColorAnyNonPhysical = Options.GetOption("OptionIDT_ColorAnyNonPhysical") == "Yes";
+            bool ShowPlayerPenetrations =
+                Options.GetOption("OptionIDT_ShowPlayerPenetrations") == "Yes";
+            bool ShowOtherPenetrations =
+                Options.GetOption("OptionIDT_ShowOtherPenetrations") == "Yes";
             var groupedDamageInstances = damageInstances.GroupBy(inst => inst.Defender);
 
-            if (groupedDamageInstances.Count() > 1)
-            {
-                XRL.Messages.MessageQueue.AddPlayerMessage("combat is MultiCell");
-            }
+            // if (groupedDamageInstances.Count() > 1)
+            // {
+            //     XRL.Messages.MessageQueue.AddPlayerMessage("combat is MultiCell");
+            // }
             foreach (var innerList in groupedDamageInstances)
             {
                 if (innerList.Count() > 1)
                 {
                     //innerList.Key is the Defender displayname
-                    XRL.Messages.MessageQueue.AddPlayerMessage(
-                        "Should regroup these multiple damage instances: " + innerList.Key
-                    );
+                    // XRL.Messages.MessageQueue.AddPlayerMessage(
+                    //     "Should regroup these multiple damage instances: " + innerList.Key
+                    // );
                 }
                 string damageType = "Physical";
                 int highestDamageAmount = 0;
                 int totalDamage = 0;
-                Cell cell = null;
-                GameObject cellDefender = null;
+                bool isAttackerThePlayer = false;
+                int highestPenetrations = 0;
+                Cell defenderCell = null;
+                GameObject Defender = null;
+                Cell attackerCell = null;
+                GameObject Attacker = null;
                 Statistic stat = null;
                 foreach (var damageInstance in innerList)
                 {
                     int amount = damageInstance.Amount;
                     totalDamage += amount;
-                    cell = damageInstance.Cell;
-                    cellDefender = damageInstance.Defender;
+                    defenderCell = damageInstance.DefenderCell;
+                    attackerCell = damageInstance.AttackerCell;
+                    Defender = damageInstance.Defender;
+                    Attacker = damageInstance.Attacker;
                     stat = damageInstance.Stat;
+
+                    if (damageInstance.Penetrations > highestPenetrations)
+                    {
+                        highestPenetrations = damageInstance.Penetrations;
+                        isAttackerThePlayer = damageInstance.IsAttackerThePlayer;
+                    }
                     if (
                         (!ColorAnyNonPhysical && amount >= highestDamageAmount)
                         || (
@@ -226,10 +231,12 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
                         damageColor = damageInstance.Color;
                     }
                 }
+
                 if (!ShowZeroBleeding && totalDamage == 0)
                 {
                     continue;
                 }
+
                 float scale = GetScale(stat, totalDamage);
                 // Display a smaller tooltip for some continuous damage types
                 if (
@@ -241,21 +248,59 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
                 {
                     scale /= 2;
                 }
-                XRL.Messages.MessageQueue.AddPlayerMessage(
-                    "display floating of type: " + damageType
-                );
-                XRL.Messages.MessageQueue.AddPlayerMessage(
-                    "total damage = " + totalDamage.ToString()
-                );
+                // XRL.Messages.MessageQueue.AddPlayerMessage(
+                //     "display floating of type: " + damageType
+                // );
+                // XRL.Messages.MessageQueue.AddPlayerMessage(
+                //     "total damage = " + totalDamage.ToString()
+                // );
+
+                if (
+                    attackerCell != null
+                    && highestPenetrations > 0
+                    && (
+                        (isAttackerThePlayer && ShowPlayerPenetrations)
+                        || (!isAttackerThePlayer && ShowOtherPenetrations)
+                    )
+                )
+                {
+                    int penetrationThreshold = highestPenetrations;
+                    if (highestPenetrations > 20)
+                    {
+                        penetrationThreshold = 20;
+                    }
+                    else if (highestPenetrations > 10)
+                    {
+                        penetrationThreshold = 10;
+                    }
+                    else if (highestPenetrations > 5)
+                    {
+                        penetrationThreshold = 5;
+                    }
+                    UnityEngine.Color penetrationColor = PenetrationsColors.Colors[
+                        penetrationThreshold
+                    ];
+                    CombatJuice.floatingText(
+                        attackerCell,
+                        "x" + highestPenetrations,
+                        penetrationColor,
+                        1.5f,
+                        14f,
+                        0.40f,
+                        true,
+                        Attacker
+                    );
+                }
+
                 CombatJuice.floatingText(
-                    cell,
+                    defenderCell,
                     "-" + totalDamage,
                     damageColor,
-                    1.5f,
+                    1f,
                     24f,
                     scale,
                     true,
-                    cellDefender
+                    Defender
                 );
             }
             Cleanup();

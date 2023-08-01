@@ -5,24 +5,36 @@ namespace Improved_Damage_Tooltips.Utilities
     public class DamageInstance
     {
         public int Amount { get; set; }
-        public GameObject Defender { get; set; }
-        public Cell Cell { get; set; }
-        public Statistic Stat { get; set; }
+        public int Penetrations { get; set; }
         public string Type { get; set; }
+        public GameObject Defender { get; set; }
+        public GameObject Attacker { get; set; }
+        public bool IsAttackerThePlayer { get; set; }
+        public Statistic Stat { get; set; }
+        public Cell DefenderCell { get; set; }
+        public Cell AttackerCell { get; set; }
         public UnityEngine.Color Color { get; set; }
 
         public DamageInstance(
             int amount,
-            GameObject defender,
+            int penetrations,
             string type,
+            GameObject defender,
+            GameObject attacker,
+            bool isAttackerThePlayer,
             Statistic stat,
-            Cell cell
+            Cell defenderCell,
+            Cell attackerCell
         )
         {
             Amount = amount;
-            Defender = defender;
-            Cell = cell;
+            Penetrations = penetrations;
             Type = type;
+            Defender = defender;
+            Attacker = attacker;
+            IsAttackerThePlayer = isAttackerThePlayer;
+            DefenderCell = defenderCell;
+            AttackerCell = attackerCell;
             Color = DamageColors.Colors[type];
         }
 
