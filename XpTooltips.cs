@@ -28,7 +28,7 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
         }
 
         [HarmonyPatch(typeof(EndActionEvent), nameof(EndActionEvent.Send))]
-        static void Prefix(GameObject __state)
+        static void Prefix()
         {
             if (totalXP > 0 && Options.GetOption("OptionICTooltips_ShowXP") == "Yes")
             {
