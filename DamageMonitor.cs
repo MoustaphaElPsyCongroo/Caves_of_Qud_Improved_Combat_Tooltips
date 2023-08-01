@@ -394,6 +394,10 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
             {
                 damageType = "Physical";
             }
+            if (damage.HasAttribute("Cosmic"))
+            {
+                damageType = "Cosmic";
+            }
             if (damage.HasAttribute("Illusion"))
             {
                 damageType = "Illusion";

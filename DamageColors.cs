@@ -29,6 +29,7 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.Utilities
             { "Physical", The.Color.Red },
             { "Illusion", The.Color.DarkBlue },
             { "Neutron", The.Color.Blue },
+            { "Cosmic", The.Color.DarkBlue },
         };
     }
 }
