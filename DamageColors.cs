@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using XRL;
 
-namespace Improved_Damage_Tooltips.Utilities
+namespace Gokudera_ElPsyCongroo_ICTooltips.Utilities
 {
     public class DamageColors
     {

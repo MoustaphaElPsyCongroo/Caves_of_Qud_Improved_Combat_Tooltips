@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <options>
 
-	<option ID="OptionIDT_ColorAnyNonPhysical"
+	<option ID="OptionICTooltips_ColorAnyNonPhysical"
 		DisplayText="Always color tooltips on special damage. When disabled, tooltips will have the color of the strongest damage type of the attack"
-		Category="Improved Damage Tooltips" Type="Checkbox"
+		Category="Improved Combat Tooltips" Type="Checkbox"
 		Default="Yes"></option>
-	<option ID="OptionIDT_ShowZeroBleeding"
+	<option ID="OptionICTooltips_ShowZeroBleeding"
 		DisplayText="Show -0 when target took 0 damage (examples: elemental immunity or bleeding without damage this turn)"
-		Category="Improved Damage Tooltips" Type="Checkbox" Default="No"></option>
-	<option ID="OptionIDT_ShowPlayerPenetrations"
+		Category="Improved Combat Tooltips" Type="Checkbox" Default="No"></option>
+	<option ID="OptionICTooltips_ShowPlayerPenetrations"
 		DisplayText="Show your current melee attack's highest penetrations on top of your tile"
-		Category="Improved Damage Tooltips" Type="Checkbox" Default="Yes"></option>
-	<option ID="OptionIDT_ShowOtherPenetrations"
+		Category="Improved Combat Tooltips" Type="Checkbox" Default="Yes"></option>
+	<option ID="OptionICTooltips_ShowOtherPenetrations"
 		DisplayText="Show other melee attackers' highest penetrations on top of their tile"
-		Category="Improved Damage Tooltips" Type="Checkbox" Default="No"></option>
-	<option ID="OptionIDT_ShowXP"
+		Category="Improved Combat Tooltips" Type="Checkbox" Default="No"></option>
+	<option ID="OptionICTooltips_ShowXP"
 		DisplayText="Show exp you gained on the middle of your tile"
-		Category="Improved Damage Tooltips" Type="Checkbox" Default="Yes"></option>
+		Category="Improved Combat Tooltips" Type="Checkbox" Default="Yes"></option>
 </options>

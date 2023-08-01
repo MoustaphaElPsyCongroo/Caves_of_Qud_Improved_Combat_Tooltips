@@ -1,6 +1,6 @@
 using XRL.World;
 
-namespace Improved_Damage_Tooltips.Utilities
+namespace Gokudera_ElPsyCongroo_ICTooltips.Utilities
 {
     public class CombatState
     {

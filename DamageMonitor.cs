@@ -2,16 +2,16 @@ using HarmonyLib;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Improved_Damage_Tooltips.Utilities;
+using Gokudera_ElPsyCongroo_ICTooltips.Utilities;
 using XRL;
 using XRL.UI;
 using XRL.World;
 using XRL.World.Parts;
 
-namespace Improved_Damage_Tooltips.HarmonyPatches
+namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
 {
     [HarmonyPatch]
-    class ShowDamage
+    class DamageMonitor
     {
         private static List<DamageInstance> damageInstances = new List<DamageInstance>();
 
@@ -171,12 +171,13 @@ namespace Improved_Damage_Tooltips.HarmonyPatches
         {
             UnityEngine.Color damageColor = The.Color.Red;
 
-            bool ShowZeroBleeding = Options.GetOption("OptionIDT_ShowZeroBleeding") == "Yes";
-            bool ColorAnyNonPhysical = Options.GetOption("OptionIDT_ColorAnyNonPhysical") == "Yes";
+            bool ShowZeroBleeding = Options.GetOption("OptionICTooltips_ShowZeroBleeding") == "Yes";
+            bool ColorAnyNonPhysical =
+                Options.GetOption("OptionICTooltips_ColorAnyNonPhysical") == "Yes";
             bool ShowPlayerPenetrations =
-                Options.GetOption("OptionIDT_ShowPlayerPenetrations") == "Yes";
+                Options.GetOption("OptionICTooltips_ShowPlayerPenetrations") == "Yes";
             bool ShowOtherPenetrations =
-                Options.GetOption("OptionIDT_ShowOtherPenetrations") == "Yes";
+                Options.GetOption("OptionICTooltips_ShowOtherPenetrations") == "Yes";
             var groupedDamageInstances = damageInstances.GroupBy(inst => inst.Defender);
 
             // if (groupedDamageInstances.Count() > 1)
