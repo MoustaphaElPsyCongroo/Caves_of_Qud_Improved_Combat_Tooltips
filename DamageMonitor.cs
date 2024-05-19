@@ -953,6 +953,10 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
             {
                 threshold = 5;
             }
+            else if (threshold <= 0)
+            {
+                threshold = 20;
+            }
 
             return threshold;
         }
