@@ -316,7 +316,10 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                 }
                 else
                 {
-                    damageInstances.LastOrDefault().Penetrations = E.GetIntParameter("Penetrations");
+                    if (damageInstances.LastOrDefault() != null)
+                    {
+                        damageInstances.LastOrDefault().Penetrations = E.GetIntParameter("Penetrations");
+                    }
                 }
             }
         }
