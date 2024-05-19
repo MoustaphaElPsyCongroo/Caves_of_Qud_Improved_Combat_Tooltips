@@ -7,9 +7,9 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.Utilities
         public bool isValidCombat;
         public bool isMultiCellDamage;
         public GameObject Defender;
-        public Statistic defenderStat;
-        public Cell attackerCell;
-        public Cell defenderCell;
+        public Statistic DefenderStat;
+        public Cell AttackerCell;
+        public Cell DefenderCell;
         public GameObject Attacker;
         public bool isAttackerThePlayer;
     }

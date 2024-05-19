@@ -9,7 +9,11 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.Utilities
         public string Type { get; set; }
         public GameObject Defender { get; set; }
         public GameObject Attacker { get; set; }
+        public int DefenderAV { get; set; }
+        public int AttackerBestRollAgainstAV { get; set; }
+        public int AttackerRollAgainstDV { get; set; }
         public bool IsAttackerThePlayer { get; set; }
+        public bool IsDefenderTakingDamage { get; set; }
         public Statistic Stat { get; set; }
         public Cell DefenderCell { get; set; }
         public Cell AttackerCell { get; set; }
@@ -19,9 +23,13 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.Utilities
             int amount,
             int penetrations,
             string type,
+            int defenderAV,
+            int attackerBestRollAgainstAV,
+            int attackerRollAgainstDV,
             GameObject defender,
             GameObject attacker,
             bool isAttackerThePlayer,
+            bool isDefenderTakingDamage,
             Statistic stat,
             Cell defenderCell,
             Cell attackerCell
@@ -30,12 +38,20 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.Utilities
             Amount = amount;
             Penetrations = penetrations;
             Type = type;
+            DefenderAV = defenderAV;
+            AttackerBestRollAgainstAV = attackerBestRollAgainstAV;
+            AttackerRollAgainstDV = attackerRollAgainstDV;
             Defender = defender;
             Attacker = attacker;
             IsAttackerThePlayer = isAttackerThePlayer;
+            IsDefenderTakingDamage = isDefenderTakingDamage;
+            Stat = stat;
             DefenderCell = defenderCell;
             AttackerCell = attackerCell;
-            Color = DamageColors.Colors[type];
+            Color =
+                type != "Miss" && type != "NoPen" && type != "MissileMiss"
+                    ? DamageColors.Colors[type]
+                    : DamageColors.Colors["Physical"];
         }
 
         public float GetScale()

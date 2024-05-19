@@ -2,18 +2,30 @@
 <options>
 
 	<option ID="OptionICTooltips_ColorAnyNonPhysical"
-		DisplayText="Always color tooltips on special damage. When disabled, tooltips will have the color of the strongest damage type of the attack"
+		DisplayText="Always color tooltips on special damage. When disabled, tooltips will have the color of the strongest damage type this action"
 		Category="Improved Combat Tooltips" Type="Checkbox"
 		Default="Yes"></option>
 	<option ID="OptionICTooltips_ShowZeroBleeding"
 		DisplayText="Show -0 when target took 0 damage (examples: elemental immunity or bleeding without damage this turn)"
 		Category="Improved Combat Tooltips" Type="Checkbox" Default="No"></option>
 	<option ID="OptionICTooltips_ShowPlayerPenetrations"
-		DisplayText="Show your current melee attack's highest penetrations on top of your tile"
+		DisplayText="Show your attacks' highest penetrations on top of your tile"
 		Category="Improved Combat Tooltips" Type="Checkbox" Default="Yes"></option>
-	<option ID="OptionICTooltips_ShowOtherPenetrations"
-		DisplayText="Show other melee attackers' highest penetrations on top of their tile"
+	<option ID="OptionICTooltips_ShowPlayerPenetrationRolls"
+		DisplayText="Show your attacks' highest penetration rolls"
 		Category="Improved Combat Tooltips" Type="Checkbox" Default="No"></option>
+	<option ID="OptionICTooltips_ShowOtherPenetrations"
+		DisplayText="Show other attackers' highest penetrations on top of their tile"
+		Category="Improved Combat Tooltips" Type="Checkbox" Default="No"></option>
+	<option ID="OptionICTooltips_ShowOtherPenetrationRolls"
+		DisplayText="Show other attackers' highest penetration rolls"
+		Category="Improved Combat Tooltips" Type="Checkbox" Default="No"></option>
+	<option ID="OptionICTooltips_ShowPlayerMissOrBlockRolls"
+		DisplayText="Show your attack's highest rolls on misses and blocks"
+		Category="Improved Combat Tooltips" Type="Checkbox" Default="Yes"></option>
+	<option ID="OptionICTooltips_ShowOtherMissOrBlockRolls"
+		DisplayText="Show other attackers' highest rolls on misses and blocks"
+		Category="Improved Combat Tooltips" Type="Checkbox" Default="Yes"></option>
 	<option ID="OptionICTooltips_ShowXP"
 		DisplayText="Show exp you gained on the middle of your tile"
 		Category="Improved Combat Tooltips" Type="Checkbox" Default="Yes"></option>

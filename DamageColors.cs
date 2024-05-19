@@ -8,8 +8,8 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.Utilities
     {
         public static IDictionary<string, Color> Colors = new Dictionary<string, Color>()
         {
-            { "Heat", The.Color.DarkOrange },
-            { "Fire", The.Color.Orange },
+            { "Heat", The.Color.Orange },
+            { "Fire", The.Color.DarkOrange },
             { "Vaporized", The.Color.Brown },
             { "Cold", The.Color.Cyan },
             { "Electric", The.Color.Yellow },
@@ -27,9 +27,12 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.Utilities
             { "Psionic", The.Color.DarkMagenta },
             { "Mental", The.Color.Magenta },
             { "Physical", The.Color.Red },
+            { "Astral", The.Color.DarkCyan },
+            { "Umbral", The.Color.Black },
+            { "Vibro", The.Color.DarkCyan },
             { "Illusion", The.Color.DarkBlue },
             { "Neutron", The.Color.Blue },
-            { "Cosmic", The.Color.DarkBlue },
+            { "Cosmic", The.Color.DarkBlue }
         };
     }
 }
