@@ -1,7 +1,7 @@
 {
 	"id": "Improved_Combat_Tooltips",
 	"loadorder": 0,
-	"title": "{{W|Improved Combat Tooltips}}",
+	"title": "{{M|Improved Combat Tooltips}}",
 	"description": "Enjoy more reactive Combat Tooltips, with multi-damage combined into one tooltip, elemental/special colors, visible penetrations, XP points tooltips and more!",
 	"tags": "UX,Cosmetic,Combat",	
 	"author": "Gokudera ElPsyCongroo",
