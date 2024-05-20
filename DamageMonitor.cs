@@ -34,7 +34,8 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                 {
                     DisplayFloatingDamage();
                 }
-                else if (!tookDamage || missedMissileAttack)
+
+                if (!tookDamage || missedMissileAttack)
                 {
                     DisplayFloatingRolls();
                 }
@@ -61,63 +62,60 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                 {
                     // XRL.Messages.MessageQueue.AddPlayerMessage("performing missile attack");
 
-                    if (!tookDamage)
+                    int incomingAttackerRollAgainstDV = lastAttackerRollAgainstDV;
+                    string damageType = "MissileMiss";
+
+                    if (incomingAttackerRollAgainstDV <= lastDefenderDV)
                     {
-                        int incomingAttackerRollAgainstDV = lastAttackerRollAgainstDV;
-                        string damageType = "MissileMiss";
+                        // XRL.Messages.MessageQueue.AddPlayerMessage("missed missile attack");
 
-                        if (incomingAttackerRollAgainstDV <= lastDefenderDV)
+                        missedMissileAttack = true;
+
+                        int damageAmount = 0;
+                        int penetrations = 0;
+                        GameObject Defender = E.GetGameObjectParameter("Defender");
+                        GameObject Attacker = lastMissileAttacker;
+                        Cell DefenderCell = Defender.CurrentCell;
+                        Statistic DefenderStat = Defender.GetStat("Hitpoints");
+                        Cell AttackerCell = Attacker.CurrentCell;
+                        bool isAttackerThePlayer = Attacker.IsPlayer();
+                        bool isDefenderTakingDamage = false;
+
+                        DamageInstance damageInstance = null;
+                        foreach (DamageInstance instance in damageInstances)
                         {
-                            // XRL.Messages.MessageQueue.AddPlayerMessage("missed missile attack");
-
-                            missedMissileAttack = true;
-
-                            int damageAmount = 0;
-                            int penetrations = 0;
-                            GameObject Defender = E.GetGameObjectParameter("Defender");
-                            GameObject Attacker = lastMissileAttacker;
-                            Cell DefenderCell = Defender.CurrentCell;
-                            Statistic DefenderStat = Defender.GetStat("Hitpoints");
-                            Cell AttackerCell = Attacker.CurrentCell;
-                            bool isAttackerThePlayer = Attacker.IsPlayer();
-                            bool isDefenderTakingDamage = false;
-
-                            DamageInstance damageInstance = null;
-                            foreach (DamageInstance instance in damageInstances)
+                            if (
+                                instance.DefenderCell == DefenderCell
+                                && instance.Type == "MissileMiss"
+                                && instance.Defender == Defender
+                            )
                             {
-                                if (
-                                    instance.DefenderCell == DefenderCell
-                                    && instance.Type == "MissileMiss"
-                                    && instance.Defender == Defender
-                                )
+                                damageInstance = instance;
+                                if (incomingAttackerRollAgainstDV > instance.AttackerRollAgainstDV)
                                 {
-                                    damageInstance = instance;
-                                    if (incomingAttackerRollAgainstDV > instance.AttackerRollAgainstDV)
-                                    {
-                                        damageInstance.AttackerRollAgainstDV = incomingAttackerRollAgainstDV;
-                                    }
-                                    break;
+                                    damageInstance.AttackerRollAgainstDV = incomingAttackerRollAgainstDV;
                                 }
+                                break;
                             }
-                            if (damageInstance == null)
-                            {
-                                damageInstance = new DamageInstance(
-                                    damageAmount,
-                                    penetrations,
-                                    damageType,
-                                    lastDefenderAV,
-                                    lastAttackerBestRollAgainstAV,
-                                    lastAttackerRollAgainstDV,
-                                    Defender,
-                                    Attacker,
-                                    isAttackerThePlayer,
-                                    isDefenderTakingDamage,
-                                    DefenderStat,
-                                    DefenderCell,
-                                    AttackerCell
-                                );
-                                damageInstances.Add(damageInstance);
-                            }
+                        }
+                        if (damageInstance == null)
+                        {
+                            damageInstance = new DamageInstance(
+                                damageAmount,
+                                penetrations,
+                                damageType,
+                                lastDefenderAV,
+                                lastAttackerBestRollAgainstAV,
+                                lastAttackerRollAgainstDV,
+                                Defender,
+                                Attacker,
+                                isAttackerThePlayer,
+                                isDefenderTakingDamage,
+                                DefenderStat,
+                                DefenderCell,
+                                AttackerCell
+                            );
+                            damageInstances.Add(damageInstance);
                         }
                     }
                 }
@@ -331,41 +329,36 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
         {
             __state = new CombatState();
 
-            if (!missedMissileAttack)
+            GameObject Defender = __instance.ParentObject;
+            GameObject Attacker =
+                E.GetGameObjectParameter("Owner") ?? E.GetGameObjectParameter("Attacker") ?? E.GetGameObjectParameter("Source");
+
+            if (isMissileAttack && Attacker == null)
             {
-                GameObject Defender = __instance.ParentObject;
-                GameObject Attacker =
-                    E.GetGameObjectParameter("Owner")
-                    ?? E.GetGameObjectParameter("Attacker")
-                    ?? E.GetGameObjectParameter("Source");
+                Attacker = lastMissileAttacker;
+            }
 
-                if (isMissileAttack && Attacker == null)
-                {
-                    Attacker = lastMissileAttacker;
-                }
-
-                // Prevents adding damage instance for already dead creatures, for
-                // example creature killed in the middle of a multi attack
-                if (
-                    Defender.IsValid()
-                    && (
-                        Defender.IsPlayer()
-                        || (Attacker != null && Attacker.IsPlayer() && Attacker.isAdjacentTo(Defender))
-                        || Defender.IsVisible()
-                    )
+            // Permitts adding damage instance for already dead creatures, for
+            // example creature killed in the middle of a multi attack
+            if (
+                Defender.IsValid()
+                && (
+                    Defender.IsPlayer()
+                    || (Attacker != null && Attacker.IsPlayer() && Attacker.isAdjacentTo(Defender))
+                    || Defender.IsVisible()
                 )
-                {
-                    __state.isValidCombat = true;
-                    __state.Defender = Defender;
-                    __state.Attacker = Attacker;
-                    __state.DefenderCell = Defender.GetCurrentCell();
-                    __state.DefenderStat = Defender.GetStat("Hitpoints");
-                    __state.AttackerCell = Attacker.GetCurrentCell();
-                }
-                else
-                {
-                    __state.isValidCombat = false;
-                }
+            )
+            {
+                __state.isValidCombat = true;
+                __state.Defender = Defender;
+                __state.Attacker = Attacker;
+                __state.DefenderCell = Defender.GetCurrentCell();
+                __state.DefenderStat = Defender.GetStat("Hitpoints");
+                __state.AttackerCell = Attacker.GetCurrentCell();
+            }
+            else
+            {
+                __state.isValidCombat = false;
             }
         }
 
@@ -374,7 +367,7 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
         {
             // Invalid combat. ProcessTakeDamage returns false if damage
             // processing shouldn't be continued for any reason
-            if (__result == false || __state.isValidCombat == false || missedMissileAttack)
+            if (__result == false || __state.isValidCombat == false)
             {
                 return;
             }
@@ -727,6 +720,26 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
 
                 foreach (var damageInstance in innerList)
                 {
+                    // Don't display rolls for invalid combat (including non
+                    // visible defenders)
+                    if (
+                        !(
+                            damageInstance.Defender.IsValid()
+                            && (
+                                damageInstance.Defender.IsPlayer()
+                                || (
+                                    damageInstance.Attacker != null
+                                    && damageInstance.Attacker.IsPlayer()
+                                    && damageInstance.Attacker.isAdjacentTo(damageInstance.Defender)
+                                )
+                                || damageInstance.Defender.IsVisible()
+                            )
+                        )
+                    )
+                    {
+                        continue;
+                    }
+
                     if (damageInstance.Type != "Miss" && damageInstance.Type != "NoPen" && damageInstance.Type != "MissileMiss")
                     {
                         continue;
