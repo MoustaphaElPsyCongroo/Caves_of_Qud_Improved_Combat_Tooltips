@@ -354,7 +354,7 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                 __state.Attacker = Attacker;
                 __state.DefenderCell = Defender.GetCurrentCell();
                 __state.DefenderStat = Defender.GetStat("Hitpoints");
-                __state.AttackerCell = Attacker.GetCurrentCell();
+                __state.AttackerCell = Attacker?.GetCurrentCell();
             }
             else
             {
@@ -367,57 +367,56 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
         {
             // Invalid combat. ProcessTakeDamage returns false if damage
             // processing shouldn't be continued for any reason
-            if (__result == false || __state.isValidCombat == false)
+            if (__result != false && __state.isValidCombat == true)
             {
-                return;
-            }
-            tookDamage = true;
+                tookDamage = true;
 
-            Damage damage = E.GetParameter("Damage") as Damage;
-            string damageType = GetDamageType(damage);
-            int damageAmount = damage.Amount;
-            int penetrations = E.GetIntParameter("Penetrations");
-            bool isDefenderTakingDamage = true;
+                Damage damage = E.GetParameter("Damage") as Damage;
+                string damageType = GetDamageType(damage);
+                int damageAmount = damage.Amount;
+                int penetrations = E.GetIntParameter("Penetrations");
+                bool isDefenderTakingDamage = true;
 
-            //Regroup damage instances by type. We need only one per type,
-            //we'll group the types into one floating tooltip later
-            //(in DisplayFloatingDamage())
-            DamageInstance damageInstance = null;
-            foreach (DamageInstance instance in damageInstances)
-            {
-                if (
-                    instance.DefenderCell == __state.DefenderCell
-                    && instance.Type == damageType
-                    && instance.Defender == __state.Defender
-                )
+                //Regroup damage instances by type. We need only one per type,
+                //we'll group the types into one floating tooltip later
+                //(in DisplayFloatingDamage())
+                DamageInstance damageInstance = null;
+                foreach (DamageInstance instance in damageInstances)
                 {
-                    damageInstance = instance;
-                    damageInstance.Amount += damageAmount;
-                    if (penetrations > damageInstance.Penetrations)
+                    if (
+                        instance.DefenderCell == __state.DefenderCell
+                        && instance.Type == damageType
+                        && instance.Defender == __state.Defender
+                    )
                     {
-                        damageInstance.Penetrations = penetrations;
+                        damageInstance = instance;
+                        damageInstance.Amount += damageAmount;
+                        if (penetrations > damageInstance.Penetrations)
+                        {
+                            damageInstance.Penetrations = penetrations;
+                        }
+                        break;
                     }
-                    break;
                 }
-            }
-            if (damageInstance == null)
-            {
-                damageInstance = new DamageInstance(
-                    damageAmount,
-                    penetrations,
-                    damageType,
-                    lastDefenderAV,
-                    lastAttackerBestRollAgainstAV,
-                    lastAttackerRollAgainstDV,
-                    __state.Defender,
-                    __state.Attacker,
-                    __state.Attacker.IsPlayer(),
-                    isDefenderTakingDamage,
-                    __state.DefenderStat,
-                    __state.DefenderCell,
-                    __state.AttackerCell
-                );
-                damageInstances.Add(damageInstance);
+                if (damageInstance == null)
+                {
+                    damageInstance = new DamageInstance(
+                        damageAmount,
+                        penetrations,
+                        damageType,
+                        lastDefenderAV,
+                        lastAttackerBestRollAgainstAV,
+                        lastAttackerRollAgainstDV,
+                        __state.Defender,
+                        __state.Attacker,
+                        __state.Attacker.IsPlayer(),
+                        isDefenderTakingDamage,
+                        __state.DefenderStat,
+                        __state.DefenderCell,
+                        __state.AttackerCell
+                    );
+                    damageInstances.Add(damageInstance);
+                }
             }
         }
 
@@ -635,7 +634,7 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                             Attacker
                         );
                     }
-                    else
+                    else if (AttackerCell != null)
                     {
                         CombatJuice.floatingText(
                             AttackerCell,
