@@ -78,8 +78,13 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                         Cell DefenderCell = Defender.CurrentCell;
                         Statistic DefenderStat = Defender.GetStat("Hitpoints");
                         Cell AttackerCell = Attacker.CurrentCell;
-                        bool isAttackerThePlayer = Attacker.IsPlayer();
                         bool isDefenderTakingDamage = false;
+                        bool isAttackerThePlayer = false;
+
+                        if (Attacker != null)
+                        {
+                            isAttackerThePlayer = Attacker.IsPlayer();
+                        }
 
                         DamageInstance damageInstance = null;
                         foreach (DamageInstance instance in damageInstances)
@@ -136,8 +141,13 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                     Cell DefenderCell = Defender.CurrentCell;
                     Statistic DefenderStat = Defender.GetStat("Hitpoints");
                     Cell AttackerCell = Attacker.CurrentCell;
-                    bool isAttackerThePlayer = Attacker.IsPlayer();
                     bool isDefenderTakingDamage = false;
+                    bool isAttackerThePlayer = false;
+
+                    if (Attacker != null)
+                    {
+                        isAttackerThePlayer = Attacker.IsPlayer();
+                    }
 
                     DamageInstance damageInstance = null;
                     foreach (DamageInstance instance in damageInstances)
@@ -191,8 +201,13 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                         Cell DefenderCell = Defender.CurrentCell;
                         Statistic DefenderStat = Defender.GetStat("Hitpoints");
                         Cell AttackerCell = Attacker.CurrentCell;
-                        bool isAttackerThePlayer = Attacker.IsPlayer();
                         bool isDefenderTakingDamage = false;
+                        bool isAttackerThePlayer = false;
+
+                        if (Attacker != null)
+                        {
+                            isAttackerThePlayer = Attacker.IsPlayer();
+                        }
 
                         DamageInstance damageInstance = null;
                         foreach (DamageInstance instance in damageInstances)
@@ -273,8 +288,13 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                         Cell DefenderCell = Defender.GetCurrentCell();
                         Statistic DefenderStat = Defender.GetStat("Hitpoints");
                         Cell AttackerCell = Attacker.GetCurrentCell();
-                        bool isAttackerThePlayer = Attacker.IsPlayer();
                         bool isDefenderTakingDamage = false;
+                        bool isAttackerThePlayer = false;
+
+                        if (Attacker != null)
+                        {
+                            isAttackerThePlayer = Attacker.IsPlayer();
+                        }
 
                         DamageInstance damageInstance = null;
                         foreach (DamageInstance instance in damageInstances)
@@ -355,6 +375,11 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                 __state.DefenderCell = Defender.GetCurrentCell();
                 __state.DefenderStat = Defender.GetStat("Hitpoints");
                 __state.AttackerCell = Attacker?.GetCurrentCell();
+
+                if (Attacker != null)
+                {
+                    __state.isAttackerThePlayer = Attacker.IsPlayer();
+                }
             }
             else
             {
@@ -409,7 +434,7 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
                         lastAttackerRollAgainstDV,
                         __state.Defender,
                         __state.Attacker,
-                        __state.Attacker.IsPlayer(),
+                        __state.isAttackerThePlayer,
                         isDefenderTakingDamage,
                         __state.DefenderStat,
                         __state.DefenderCell,
