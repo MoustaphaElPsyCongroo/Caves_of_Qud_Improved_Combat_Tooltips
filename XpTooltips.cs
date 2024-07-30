@@ -5,14 +5,12 @@ using XRL.World;
 
 namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
 {
-    [HasGameBasedStaticCache]
     [HarmonyPatch]
     public class ShowXPTooltips
     {
         public static int totalXP = 0;
 
-        [GameBasedStaticCache]
-        public static GameObject Player = null;
+        public static GameObject Player;
 
         [HarmonyPatch(typeof(AwardedXPEvent), nameof(AwardedXPEvent.Send))]
         static bool Prefix(IXPEvent ParentEvent, int Amount)
