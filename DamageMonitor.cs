@@ -9,7 +9,7 @@ using XRL.World;
 using XRL.World.Parts;
 using XRL.Rules;
 
-namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
+namespace Gokudera_ElPsyCongroo_ICTooltips.DamageMonitor
 {
     [HarmonyPatch]
     class DamageMonitor
@@ -25,25 +25,29 @@ namespace Gokudera_ElPsyCongroo_ICTooltips.HarmonyPatches
         private static bool isMissileAttack = false;
         private static bool missedMissileAttack = false;
 
-        [HarmonyPatch(typeof(EndActionEvent), nameof(EndActionEvent.Send))]
-        static void Postfix()
+        [HarmonyPatch(typeof(GameObject), nameof(GameObject.HandleEvent))]
+        [HarmonyPatch(new Type[] { typeof(MinEvent) })]
+        static void Postfix(MinEvent E)
         {
-            if (damageInstances.Any())
+            if (E.ID == EndActionEvent.ID)
             {
-                if (tookDamage)
+                if (damageInstances.Any())
                 {
-                    DisplayFloatingDamage();
-                }
+                    if (tookDamage)
+                    {
+                        DisplayFloatingDamage();
+                    }
 
-                if (!tookDamage || missedMissileAttack)
-                {
-                    DisplayFloatingRolls();
+                    if (!tookDamage || missedMissileAttack)
+                    {
+                        DisplayFloatingRolls();
+                    }
+
+                    tookDamage = false;
+                    isMissileAttack = false;
+                    missedMissileAttack = false;
                 }
             }
-
-            tookDamage = false;
-            isMissileAttack = false;
-            missedMissileAttack = false;
         }
 
         // to get the latest attackerRoll and defenderRoll before damage or
